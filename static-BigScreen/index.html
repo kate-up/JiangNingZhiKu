@@ -1,0 +1,1887 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>江宁智库大屏</title>
+        <script language="javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=acedaa71c0c42e595703f11207a93b89&plugin=Map3D,AMap.DistrictSearch"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/echarts.min.js"></script>
+        <script src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+        <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
+        <script src="http://cdn.hcharts.cn/highcharts/highcharts-3d.js"></script>
+        <style>
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                color: #fff;
+                font-family: 'Microsoft YaHei';
+            }
+            ul {
+                list-style: none;
+            }
+            #container {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                z-index: 0;
+                top: 0;
+                right: 0;
+                background: url('./img/base_bg0.png');
+                background-size: 100% 100%;
+            }
+            .top_title {
+                width: 100%;
+                height: 8%;
+                background: url('./img/title01.png');
+                background-size: 100% 100%;
+                display: flex;
+                justify-content: space-between;
+                z-index: 10;
+            }
+            .top_title div {
+                /* width: 30%; */
+                height: 49%;
+                text-align: center;
+                line-height: 55px;
+                font-size: 14px;
+                z-index: 10;
+            }
+            .content {
+               position: absolute;
+               /* z-index: -1;  */
+                width: 100%;
+                height: 100%;
+                background: url('./img/base_bg0.png') no-repeat ;
+                background-size: 100% 100%;
+            }
+            .tabbar {
+                width: 100%;
+                padding: 0%;
+                /* background: url('./img/title_bg.png') no-repeat; */
+                /* background-size: 100% 100%; */
+                display: flex;
+                justify-content: space-around;
+            }
+            .tabbar li {
+                font-size: 12px;
+                /* margin: -18px 15px -12px 15px; */
+                width: 22%;
+                height: 26px;
+                cursor: pointer;
+                white-space: nowrap;
+                background: url('./img/smtitlebg.png') no-repeat;
+                background-size: 100% 100%;
+                z-index: 10;
+                text-align: center;
+            }
+            .tabbar li div {
+                line-height: 20px;
+                font-weight: bold;
+                color: #00ebfb;
+            }
+            .tabbarAct, .sm_tit, .searchTit {
+                background-image: -webkit-linear-gradient(top,#eacd93,#eb9d47);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                color: #eb9d47;
+            }
+            .details {
+                height: 92%;
+                display: flex;
+                justify-content: space-between;
+            }
+            .details > div:nth-child(odd) {
+                width: 28%;
+                z-index: 10;
+            }
+            .details > div:nth-child(even) {
+                width: 44%;
+            }
+            .zxfx {
+                height: 32%;
+                margin: 0 3% 2.5% 0;
+                background: url('./img/zxfxbox.png');
+                background-size: 100% 100%;
+            }
+            .sm_tit {
+                display: flex;
+                font-weight: bold;
+                font-size: 15px;
+                padding: 2% 0 1% 4%;
+            }
+            .sm_tit img {
+                height: 17px;
+                width: 30%;
+                padding: 1% 0 0 3%;
+            }
+            .zxfx_tab {
+                display: flex;
+                justify-content: space-around;
+                font-size: 12px;
+                
+            }
+            .zxfx_tab li {
+                color: #09add3;
+                width: 32.3%;
+                padding: 1.5%;
+                text-align: center;
+                background: #0f409a;
+                cursor: pointer;
+                border: 1px solid #0f409a;
+            }
+            .zxfx_act {
+                color: #00ebfb !important;
+            }
+            .zxfx_ul {
+                height: 100%; 
+                display: flex;
+                flex-direction: column; 
+                justify-content: space-around;
+            }
+            .zxfx_ul li {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                font-size: 12px;
+                padding: 3% 0;
+                margin: 2% 0;
+                border: 1px solid #0a43bb;
+                background: rgba(15, 61, 122, 0.3);
+                white-space: nowrap;
+            }
+            .zxfx_ul li > div {
+                display: flex;
+                width: 33%;
+            }
+            .zxfx_ul li > div > div:nth-child(odd) {
+                width: 55%;
+                text-align: center;
+                color: #00ebfb;
+            }
+            .zxfx_ul li > div > div:nth-child(even) {
+                width: fit-content;
+                width: 40%;
+                width: 58px;
+                padding: 0 5px;
+                text-align: center;
+                background: rgba(13, 64, 154, 0.7);
+                border: 1px solid #0a43bb;
+            }
+            .fzr {
+                padding: 0 !important;
+                background: none !important;
+                border: none !important;
+            }
+            .fzr img {
+                height: 8px;
+                margin: 0 2px 1px 0;
+            }
+            .rylb {
+                position: absolute;
+                bottom: 0.9%;
+                height: 30.3%;
+                width: 44%;
+            }
+            .rdyw  {
+                height: 32%;
+                margin: 0 3% 2.5% 0;
+                background: url('./img/rdywbox.png');
+                background-size: 100% 100%;
+            }
+            .rylb {
+                background: url('./img/zstzbox.png');
+                background-size: 100% 100%;
+            }
+            .rdyw_ul {
+                padding-left: 2%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                height: 84%;
+            }
+            .rdyw_ul li {
+                font-size: 12px;
+                line-height: 27px;
+                white-space: nowrap;
+            }
+            .rdyw_ul li img {
+                vertical-align: middle;
+                margin: 0 10px;
+            }
+            .sjzl {
+                height: 33%;
+                margin: 0 3% 0 0;
+                background: url('./img/sjzlbox.png');
+                background-size: 100% 100%;
+            }
+            .sjzl_cont {
+                display: flex;
+                justify-content: space-around;
+                padding: 0 2%;
+                height: 74%;
+            }
+            .sjzl_cont > div:nth-child(1) {
+                width: 30%;
+                text-align: center;
+            }
+            .sjzl_cont > div:nth-child(2) {
+                width: 65%;
+            }
+            .sjzl_left {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+            .sjzl_left span ,.sjzl_left p {
+                font-size: 12px;
+            }
+            .sjzl_left p {
+                color: #00ebfb;
+                margin-top: 2%;
+            }
+            .baseplat {
+                background: url('./img/baseplate.png') no-repeat;
+                background-size: 50% 50%;
+                background-position: bottom;
+                height: 77%;
+            }
+            .sjzl_echart, .sjzl_left {
+                border: 1px solid #0a43bb;
+                background: rgba(15, 61, 122, 0.3);
+            }
+            .middle_cont {
+
+            }
+            .right_cont > div:nth-child(1) {
+                height: 32.5%;
+                margin: 0 0 2.5% 3%;
+            }
+            .right_cont > div:nth-child(2) {
+                height: 65%;
+                margin: 0 0 0 3%;
+                background: url('./img/gzlfzbox.png') no-repeat;
+                background-size: 100% 100%;
+            }
+            .jjyx {
+                white-space: nowrap;
+                width: 100%;
+                font-size: 15px;
+            }
+            .jjyx img {
+                vertical-align: middle;
+                padding: 4px;
+                width: 30%;
+            }
+            .gzlfz_text, .gzlfz_text0 {
+                background-image: -webkit-linear-gradient(top,#01ffff,#01ffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                padding: 9% 0%;
+            }
+            .gzlfz_text0 {
+                background-image: -webkit-linear-gradient(top,#eacd93,#eb9d47);
+            }
+            .vs_img {
+                margin: 0 26px;
+                height: 0%;
+            }
+            .zhiku, .rylb_tit_row input {
+                background: transparent;
+                border: 0;
+                outline: none;
+                width: 100px;
+                font-size: 12px;
+            }
+            .zhiku::-webkit-input-placeholder{/*Webkit browsers*/
+                color: #fff;
+                font-size: 12px;
+            }
+            .zhiku:-moz-placeholder{/*Mozilla Firefox 4 to 8*/
+                color:#999;
+                font-size: 12px;
+            }
+            .zhiku::moz-placeholder{/*Mozilla Firefox 19+*/
+                color:#999;
+                font-size: 12px;
+            }
+            .zhiku:-ms-input-placeholder{/*Internet Explorer 10+*/
+                color:#999;
+                font-size: 12px;
+            }
+            .rylb_tit_row input::-webkit-input-placeholder{/*Webkit browsers*/
+                color: #00ebfb;
+                font-size: 12px;
+            }
+            .rylb_tit_row input:-moz-placeholder{/*Mozilla Firefox 4 to 8*/
+                color:#00ebfb;
+                font-size: 12px;
+            }
+            .rylb_tit_row input::moz-placeholder{/*Mozilla Firefox 19+*/
+                color:#00ebfb;
+                font-size: 12px;
+            }
+            .rylb_tit_row input:-ms-input-placeholder{/*Internet Explorer 10+*/
+                color:#00ebfb;
+                font-size: 12px;
+            }
+            .search_img, .rylb_tit_row img {
+                width: 14px;
+                height: 14px;
+                vertical-align: middle;
+                cursor: pointer;
+            }
+            .rylb_tit_row, .hjjc_unit {
+                position: absolute;
+                top: 0;
+                right: 0;
+                border: 1px solid #0a43bb;
+                background: rgba(15, 61, 122, 0.3);
+                padding: 0px 9px 4px;
+                margin: 6px 5px;
+            }
+            .hjjc_unit {
+                border: none;
+                background: none;
+                font-size: 12px;
+                top: 8px;
+            }
+            .rylb_tit_row img {
+                margin-right: 5px;
+            }
+            .rylb_table {
+                width: 100%;
+                text-align: center;
+                font-size: 12px;
+                height: 100%;
+                border-collapse:collapse;
+                overflow: hidden;
+            }
+            .rylb_table thead td {
+                color: #00ebfb !important;
+            }
+            .rylb_table thead td {
+                padding-bottom: 6px;
+            }
+            .rylb_table tbody tr:nth-child(odd) {
+                background: #000000;
+                background: -moz-linear-gradient(left,  rgba(0,0,0,0) 0%, rgba(15, 61, 122, 0.9) 100%);
+                background: -webkit-gradient(linear, left, right, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(15, 61, 122, 0.9)));
+                background: -webkit-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                background: -o-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                background: -ms-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                background: linear-gradient(to right,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(0,0,0,0)', endColorstr='rgba(15, 61, 122, 0.9)',GradientType=0 );
+            }
+            .word_red {
+                color: #dd4528;
+            }
+            .selecte {
+                display: block;
+            }
+            .not_seled {
+                display: none;
+            }
+            .selecte0 {
+                display: block;
+            }
+            .not_seled0 {
+                visibility: hidden !important;
+            }
+
+            .amap-icon img {
+            width: 25px;
+            height: 34px;
+            }
+
+            .info {
+                color: #fff;
+                font-size: 13px;
+                text-align: center;
+                padding: 0 20px;
+            }
+
+            .amap-info-content,
+            .amap-info-outer {
+            background: rgba(0, 0, 0, 0.5);
+            }
+
+            .bottom-center .amap-info-sharp {
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid rgba(0, 0, 0, 0.5);
+            }
+            .searchTit {
+                font-weight: bold;
+                font-size: 14px;
+            }
+            .hidescoll::-webkit-scrollbar {
+                display: none;
+            }
+        </style>
+    </head>
+
+    <body >
+        <div class="content">
+            <div class="top_title">
+                <img style="background: rgba(0,0,0,0.6);width: 100%; height: 100%;z-index: 10;" src="./img/title01.png" alt="">
+            </div>
+            <div class="details">
+                <div class="left_cont">
+                    <div class="zxfx">
+                        <div class="sm_tit"><div>政效分析</div><img src="./img/xiexian.png" alt=""></div>
+                        <div style="padding: 0 2%; height: 85%;">
+                            <ul id="tabbar" class="zxfx_tab">
+                                <li class="zxfx_act">今日大厅</li><li>工单12345</li><li>预审待办</li>
+                            </ul>
+                            <div id="content" style="height: 85%;">
+                                <ul class="zxfx_ul selecte" style="height: 100%; flex-direction: column; justify-content: space-around;">
+                                    <li>
+                                        <div>
+                                            <div>办理进度</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>已办理</div>
+                                            <div>158人次</div>
+                                        </div>
+                                        <div>
+                                            <div>待办理</div>
+                                            <div>5人次</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>本月叫号峰值</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>峰值日</div>
+                                            <div class="fzr"><img src="./img/red_circle.png" />2020-3-18</div>
+                                        </div>
+                                        <div>
+                                            <div>日均值</div>
+                                            <div>8单/日</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>本月累计</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>本年累计</div>
+                                            <div>158人次</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul class="zxfx_ul not_seled" style="height: 100%; flex-direction: column; justify-content: space-around;">
+                                    <li>
+                                        <div>
+                                            <div>办结率</div>
+                                            <div >78件</div>
+                                        </div>
+                                        <div>
+                                            <div>已派单</div>
+                                            <div>158件</div>
+                                        </div>
+                                        <div>
+                                            <div>已结单</div>
+                                            <div class="word_red">54</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>及时签收率</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>综合满意率</div>
+                                            <div>64%</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>本月累计</div>
+                                            <div class="word_red">113单</div>
+                                        </div>
+                                        <div>
+                                            <div>本年累计</div>
+                                            <div class="word_red">2024单</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul class="zxfx_ul not_seled" style="height: 100%; flex-direction: column; justify-content: space-around;">
+                                    <li>
+                                        <div>
+                                            <div>不通过项目</div>
+                                            <div>78件</div>
+                                        </div>
+                                        <div>
+                                            <div>已派单</div>
+                                            <div>158人次</div>
+                                        </div>
+                                        <div>
+                                            <div>已办结</div>
+                                            <div class="word_red">54</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>已通过项目</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>综合满意率</div>
+                                            <div>64%</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>平均处理周期</div>
+                                            <div class="word_red">113单</div>
+                                        </div>
+                                        <div>
+                                            <div>本年累计</div>
+                                            <div class="word_red">2024件</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="rdyw">
+                        <div class="sm_tit"><div>热点要闻</div><img src="./img/xiexian.png" alt=""></div>
+                        <ul class="rdyw_ul">
+                            <li><img src="./img/sm_circle.png" />我有一批重点基础设施战略合作项目集中签约 <img src="./img/hot.png" alt=""></li>
+                            <li><img src="./img/sm_circle.png" />秣陵新市镇三期安置房及公共基础设施项目批前公示 <img src="./img/hot.png" alt=""></li>
+                            <li><img src="./img/sm_circle.png" />助企业复工达产，江宁律师“搭把手”</li>
+                            <li><img src="./img/sm_circle.png" />江宁区24个村庄命名市级示范村</li>
+                            <li><img src="./img/sm_circle.png" />市政府关于变更雨花台区部分行政区划的批复</li>
+                            <li><img src="./img/sm_circle.png" />我区入江水质持续改善</li>
+                        </ul>
+                    </div>
+                    <div class="sjzl">
+                        <div class="sm_tit"><div>数据总览</div><img src="./img/xiexian.png" alt=""></div>
+                        <div class="sjzl_cont" style="display: flex;">
+                            <div class="sjzl_left">
+                                <div>
+                                    <div class="baseplat">166<span>米</span></div>
+                                    <p>本月增量</p>
+                                </div>
+                                <div>
+                                    <div class="baseplat">5568<span>米</span></div>
+                                    <p>智库数据总量</p>
+                                </div>
+                            </div>
+                            <div class="sjzl_echart">
+                                <div id="allnum" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="middle_cont">
+                    <div style="position: absolute;top: 9%;width: 44%;height: 30px;">
+                        <ul id="ulList" class="tabbar" >
+                            <li ><div class="tabbarAct">人员信息</div></li><li><div>项目信息</div></li><li><div>环境监测</div></li><li><div>招商投资</div></li>
+                        </ul>
+                    </div>
+                    <div id="search01" style="display: block;">
+                        <div style="display: flex; margin: 7%  auto 0;width: fit-content;font-size: 12px;">
+                            <div style="background: rgba(255, 255, 255, 0.07); padding: 11px 8px;z-index: 10;">智库<img src="./img/down.png" /></div>
+                            <div style="background: rgba(0,0,0,0.25); padding: 11px 8px;z-index: 10;"><input id="zhiku" class="zhiku" type="text" placeholder="请输入关键词"><img id="zk_search" class="search_img" src="./img/search.png" alt=""></div>
+                        </div>
+                    </div>
+                    <div id="search02" style="display: none; width: 44%;height: 55.7%;background: url(./img/zstzbox.png);background-size: 100% 100%;z-index: 100;position: absolute;top: 12%;">
+                        <div style="position: relative;">
+                            <div style="display: flex; margin: 1%  auto 0;width: fit-content;font-size: 12px;">
+                                <div style="background: rgba(48, 98, 151, 0.5); padding: 11px 8px;z-index: 10;">智库<img src="./img/down.png" /></div>
+                                <div style="background: rgba(66,77,103,0.5); padding: 11px 8px;z-index: 10;"><input id="zhiku01" class="zhiku" type="text" placeholder="请输入关键词"><img id="zk_search01" class="search_img" src="./img/search.png" alt=""></div>
+                            </div>
+                            <img id="closeImg" style="position: absolute; right: 24px;width: 21px;top: 10px;" src="./img/close.png" alt="">
+                        </div>
+                        <div style="color: #fff; font-size: 13px;padding: 5px 40px 5px 25px;">
+                            <img style="width: 18px;height: 18px;vertical-align: middle;margin-right: 5px;" src="./img/blueSear.png" alt="">最近搜索
+                            <div id="nearSear" style="display: flex;justify-content: space-between;margin: 10px 0 20px 0;">
+                                <ul style="display: flex;margin-left: 21px;">
+                                    <li style="margin-right: 10px;background: url('./img/nearSear.png');width: fit-content;padding: 5px 10px;">东山街道</li>
+                                    <li style="margin-right: 10px;background: url('./img/nearSear.png');width: fit-content;padding: 5px 10px;">东山街道</li>
+                                </ul>
+                                <img id="shanchu" style="width: 20px;height: 20px;" src="./img/shanchu.png" alt="">
+                            </div>
+                            <img style="width: 18px;height: 18px;vertical-align: middle;margin-right: 5px;" src="./img/result.png" alt="">搜索结果
+                            <ul style="margin: 10px 0 20px 0;    margin: 10px 0 20px 0;max-height: 358px; overflow: auto;">
+                                <li style="background: url('./img/blueBox.png');padding: 10px;margin-bottom: 8px;">
+                                    <p class="searchTit">东山街道</p>
+                                    <div style="font-size: 12px; line-height: 19px;">东山街道隶属于南京市江宁区，位于江宁区中部，是江宁区区委、区政府所在地，是江宁区的正式、经济、文化中心，尹总过古典东晋时期注明宰相谢安的典故“东山再起而得名。截止2010年，东山街道总面积73平方千亩，下下16个社谔谔去，总人口1909308人（2010面</div>
+                                </li>
+                                <li style="background: url('./img/blueBox.png');padding: 10px;margin-bottom: 8px;">
+                                    <p class="searchTit">东山街道</p>
+                                    <div style="font-size: 12px; line-height: 19px;">东山街道隶属于南京市江宁区，位于江宁区中部，是江宁区区委、区政府所在地，是江宁区的正式、经济、文化中心，尹总过古典东晋时期注明宰相谢安的典故“东山再起而得名。截止2010年，东山街道总面积73平方千亩，下下16个社谔谔去，总人口1909308人（2010面</div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="container"></div>
+                    <div id="mid_cont">
+                        <div class="rylb selecte0" >
+                            <div class="sm_tit"><div>人员列表</div><img src="./img/xiexian.png" alt=""></div>
+                            <div class="rylb_tit_row">
+                                <img id="rylb_sear" src="./img/search0.png" alt=""><input type="text" placeholder="请输入搜索人信息">
+                            </div>
+                            <table class="rylb_table" >
+                                    <thead>
+                                        <tr style="width: 100%;">
+                                            <td>姓名</td><td>职位</td><td>电话</td><td>性别</td><td>年龄</td>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            <div class="hidescoll" style="width: 100%; height: 74%;padding: 3px 5px 0;overflow-y: auto;position: relative;">
+                                <table class="rylb_table">
+                                    <tbody id="thbody" ></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="rylb not_seled0" >
+                            <div class="sm_tit"><div>项目信息</div><img src="./img/xiexian.png" alt=""></div>
+                            <div class="hjjc_unit">数量：个</div>
+                            <div class="xmxx" style="width: 100%; height: 80%;padding: 3px 5px 0;display: flex;">
+                                <div id="xmxx_pie" style="width: 50%; height: 100%;"></div>
+                                <div id="xmxx_line" style="width: 50%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="rylb not_seled0" >
+                            <div class="sm_tit"><div>环境监测</div><img src="./img/xiexian.png" alt=""></div>
+                            <div class="hjjc_unit">数量：个</div>
+                            <div style="width: 100%; height: 80%;padding: 3px 5px 0;">
+                                <div id="hjjc_echart" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="rylb not_seled0">
+                            <div class="sm_tit"><div>招商投资</div><img src="./img/xiexian.png" alt=""></div>
+                            <div style="width: 100%; height: 80%;padding: 3px 5px 0;display: flex;">
+                                <div id="zstz_pie" style="width: 45%; height: 100%;"></div>
+                                <div id="zstz_line" style="width: 55%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right_cont">
+                    <div class="zxfx">
+                        <div class="sm_tit"><div>经济运行</div><img src="./img/xiexian.png" alt=""></div>
+                        <div style="padding: 0 2%; height: 100%;">
+                            <div class="jjyx"><div style="margin: auto;width: fit-content;"><img src="./img/left_sq.png" />地区生产总值趋势图<img src="./img/right_sq.png" /></div></div>
+                            <div id="jjyx_echart" style="width: 100%; height: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="sjzl">
+                        <div class="sm_tit"><div>高质量发展</div><img src="./img/xiexian.png" alt=""></div>
+                        <div style="font-size: 18px;font-weight: bold;text-align: center;">
+                            <div style="display: flex;width: fit-content;margin: 5% auto;">
+                                <div class="gzlfz_text">江宁</div>
+                                <img class="vs_img" src="./img/vs.png" alt="">
+                                <div class="gzlfz_text0">昆山</div>
+                            </div>
+                        </div>
+                        <div id="gzlfz_chart" style="width: 100%; height: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+<script language="javascript">
+    //  根据点击id的不同获取不同的个人信息
+    function openInfo (e) {
+        console.log(e)
+    }
+
+    //利用行政区查询获取边界构建mask路径
+    //也可以直接通过经纬度构建mask路径
+    var district = new AMap.DistrictSearch({
+        subdistrict: 0,
+        extensions: 'all',
+        level: 'city'
+    });
+    district.search('江宁区', function (status, result) {
+        var bounds = result.districtList[0]
+        .boundaries; // 描边坐标数组[118.618582,31.87338,118.618184,31.873338,118.618019,31.873358,118.617923,31.873421,118.61788,31.873531,118.617863,......]
+        var map = new AMap.Map('container', {
+        center: [118.85, 31.95],
+        disableSocket: true,
+        viewMode: '3D',
+        showLabel: false,
+        labelzIndex: 130,
+        features: ['bg', 'building', 'road'], // 显示图层（背景，建筑，街道）
+        pitch: 40, // 俯视角度
+        zoom: 12, // 初始放大级别（有 0~21）
+        resizeEnable: false, //是否监控地图容器尺寸变化
+        // mapStyle: "amap://styles/blue", // 地图样式
+        mapStyle: 'amap://styles/d92bce30918d5b5c57a0ddd3941aad86', //设置地图的显示样式
+        });
+
+        //添加高度面
+        var object3Dlayer = new AMap.Object3DLayer({
+            zIndex: 1
+        });
+        map.add(object3Dlayer)
+        var height = -6000;
+        var color = '#0088ffcc'; //rgba
+        var wall = new AMap.Object3D.Wall({
+            path: bounds,
+            height: height,
+            color: color
+        });
+        wall.transparent = true
+        object3Dlayer.add(wall)
+        //添加描边
+        for (var i = 0; i < bounds.length; i += 1) {
+            new AMap.Polyline({
+                path: bounds[i],
+                strokeColor: '#00ebfb',
+                strokeWeight: 6,
+                map: map
+            })
+        };
+        // 设置多个marker
+        var markers = [];
+        var lnglats = [
+            {
+            icon: './img/green_per.png',
+            position: [118.605467, 31.797761],
+            content: {
+                job: '1',
+                num: 11,
+                info: {
+                    job: '1',
+                    infos: [
+                        {
+                            id: 111,
+                            name: '李四',
+                            post: 'bababab',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 35
+                        }
+                    ]
+                }
+            }
+            }, {
+            icon: './img/green_per.png',
+            position: [118.658904, 31.783423],
+            content: {
+                job: '2',
+                num: 6,
+                info: {
+                    job: '2',
+                    infos: [
+                        {
+                            id: 222,
+                            name: '李四',
+                            post: 'bababab',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 35
+                        }
+                    ]
+                }
+            }
+            }, {
+            icon: './img/green_per.png',
+            position: [118.705467, 31.807761],
+            content: {
+                job: '3',
+                num: 23,
+                info: {
+                    job: '3',
+                    infos: [
+                        {
+                            id: 312,
+                            name: '王炸',
+                            post: '局长',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 45
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        },
+                        {
+                            id: 313,
+                            name: '王炸炸炸',
+                            post: '局长李仁杰',
+                            phon: '15845936748',
+                            sex: '男',
+                            age: 95
+                        }
+                    ]
+                }
+            }}
+        ];
+        // 窗体信息
+        var infoWindow = new AMap.InfoWindow({
+            offset: new AMap.Pixel(0, -30)
+        });
+        function markerClick(e) {
+            infoWindow.setContent(e.target.content);
+            infoWindow.open(map, e.target.getPosition());
+        }
+        map.setFitView();
+
+        function removeMarkers(){
+            map.remove(markers);// 移除markers标记
+            infoWindow.close(); // 移除窗体信息
+        }
+        addMarker0()
+        // 人员信息Marker
+        function addMarker0 () {
+            for (var i = 0, marker; i < lnglats.length; i++) {
+                marker = new AMap.Marker({
+                    position: lnglats[i].position,
+                    map: map,
+                    icon: lnglats[i].icon,
+                    clickable: true,
+                    extData: lnglats[i]
+                });
+                markers.push(marker)
+                //设置文本标注内容
+                marker.content = "<div><div class='info'>" + 
+                    lnglats[i].content.job + "</div><div class='info'>" + 
+                    lnglats[i].content.num + "</div></div>"
+                marker.on('click', function changeLists(e) {
+                    infoWindow.setContent(e.target.content);
+                    infoWindow.open(map, e.target.getPosition());
+                    var whichlist = e.target.De.extData.content.job
+                    var perLists = e.target.De.extData.content.info
+                    if(whichlist == perLists.job) {
+                        var infos = perLists.infos
+                        document.getElementById("thbody").innerHTML = ''
+                        for(var j=0; j<infos.length; j++) {
+                            document.getElementById("thbody").innerHTML += 
+                            `<tr style="height:30px;" onclick='openInfo(`+ 
+                            infos[j].id +`)'><td>`+ 
+                            infos[j].name +`</td><td>`+ 
+                            infos[j].post +`</td><td>`+ 
+                            infos[j].phon +`</td><td>`+ 
+                            infos[j].sex +`</td><td>`+ 
+                            infos[j].age +`</td></tr>`
+                        }
+                    }
+                });
+                marker.emit('click', {
+                    target: marker
+                });
+            }
+        }
+
+        // 项目信息markers
+        var xmxxMark = [{
+            icon: './img/normal.png',
+            position: [118.705497, 31.695761],
+            content: {
+                title: '禄口机场扩建项目',
+                state: '已开工',
+                plan: '正常',
+                unit: 'xxx建筑',
+                amount: '245亿元',
+                principal: '徐卡宴',
+                start: '2020-3-12 17:45',
+                type: '城建项目',
+                finish: '2020-3-12 17:45'
+            }}, {
+            icon: './img/over.png',
+            position: [118.858904, 31.903423],
+            content: {
+                title: '兰花公园改建项目',
+                state: '延期',
+                plan: '正常',
+                unit: 'xxx建筑',
+                amount: '245亿元',
+                principal: '徐卡宴',
+                start: '2020-3-12 17:45',
+                type: '城建项目',
+                finish: '2020-3-12 17:45'
+            }
+        }];
+        function addMarker1(){
+            for (var i = 0, marker; i < xmxxMark.length; i++) {
+                marker = new AMap.Marker({
+                    position: xmxxMark[i].position,
+                    map: map,
+                    icon: xmxxMark[i].icon,
+                })
+                markers.push(marker)
+                //设置文本标注内容
+                marker.content = "<div style='font-size: 12px;line-height: 22px;'><div style='text-align: center;color: #00e4f5;'>"+ 
+                    xmxxMark[i].content.title +"</div><table><tr><td style='padding-right: 10px;'>状态："+ 
+                    xmxxMark[i].content.state +"</td><td>进度："+ 
+                    xmxxMark[i].content.plan +"</td></tr><tr><td style='padding-right: 10px;'>负责单位："+ 
+                    xmxxMark[i].content.unit +"</td><td>投资额："+ 
+                    xmxxMark[i].content.amount +"</td></tr><tr><td style='padding-right: 10px;'>项目负责人："+ 
+                    xmxxMark[i].content.principal +"</td><td>开始时间："+ 
+                    xmxxMark[i].content.start +"</td></tr><tr><td style='padding-right: 10px;'>项目类型："+ 
+                    xmxxMark[i].content.type +"</td><td>更新时间："+ 
+                    xmxxMark[i].content.finish +"</td></tr></table></div>"
+                marker.on('click', markerClick);
+                marker.emit('click', {
+                    target: marker
+                });
+            }
+        };
+        
+        // 环境监测markers
+        var hjjcMark = [
+            {
+            icon: './img/normal0.png',
+            position: [118.665497, 31.785761],
+            content: {
+                title: '胜太路3号站点',
+                jing: 'E43.434°',
+                wei: 'S33.432°',
+                type: '二氧化硫浓度',
+                num: '250ug/m3',
+                state: '正常',
+                time: '2020-3-12 17:45'
+            }}, {
+            icon: './img/exceptron.png',
+            position: [118.698904, 31.733423],
+            content: {
+                title: '东山8号站点',
+                jing: 'E43.434°',
+                wei: 'S33.432°',
+                type: 'PM2.5',
+                num: '250ug/m3',
+                state: '异常',
+                time: '2020-3-12 17:45',
+            }},{
+            icon: './img/normal0.png',
+            position: [118.665497, 31.785761],
+            content: {
+                title: '胜太路3号站点',
+                jing: 'E43.434°',
+                wei: 'S33.432°',
+                type: '二氧化硫浓度',
+                num: '250ug/m3',
+                state: '正常',
+                time: '2020-3-12 17:45'
+            }}, {
+            icon: './img/exceptron.png',
+            position: [118.698904, 31.733423],
+            content: {
+                title: '东山8号站点',
+                jing: 'E43.434°',
+                wei: 'S33.432°',
+                type: 'PM2.5',
+                num: '250ug/m3',
+                state: '异常',
+                time: '2020-3-12 17:45',
+            }}
+        ];
+        function addMarker2(){
+            for (var i = 0, marker; i < hjjcMark.length; i++) {
+                marker = new AMap.Marker({
+                    position: hjjcMark[i].position,
+                    map: map,
+                    icon: hjjcMark[i].icon,
+                })
+                markers.push(marker)
+                //设置文本标注内容
+                marker.content = "<div style='font-size: 12px;line-height: 22px;'><div style='text-align: center;color: #00e4f5;'>"+ 
+                    hjjcMark[i].content.title +"</div><div style='display:flex;justify-content:space-between'><div>经度："+ 
+                    hjjcMark[i].content.jing +"</div><div>经度："+ 
+                    hjjcMark[i].content.wei +"</div></div><div>污染类型："+ 
+                    hjjcMark[i].content.type +"</div><div style='display:flex;justify-content:space-between'><div>监测值："+ 
+                    hjjcMark[i].content.num +"</div><div>状态： "+ 
+                    hjjcMark[i].content.state +"</div></div><div>更新时间："+ 
+                    hjjcMark[i].content.time +"</div></div>"
+                marker.on('click', markerClick);
+                marker.emit('click', {
+                    target: marker
+                });
+            }
+        }
+
+        // 招商投资markers
+        var zstzMark = [
+            {
+            icon: './img/seccess.png',
+            position: [118.605497, 31.795761],
+            content: {
+                title: '禄口机场扩建项目',
+                general: 'xxx项目，是2020年江宁区重点实施项目，项目位于江宁开发区。2019年12月启动，xxx项目，是2020年江宁区重点落实项目',
+                plan: '129亿元',
+                finish: '64%',
+                real: '80亿元',
+                nature: '内资',
+                course: '进行中...',
+                time: '2020年2月'
+            }}, {
+            icon: './img/fail.png',
+            position: [118.658904, 31.783423],
+            content: {
+                title: '禄口机场扩建项目',
+                general: 'xxx项目，是2020年江宁区重点实施项目，项目位于江宁开发区。2019年12月启动，xxx项目，是2020年江宁区重点落实项目',
+                plan: '129亿元',
+                finish: '64%',
+                real: '80亿元',
+                nature: '内资',
+                course: '进行中...',
+                time: '2020年2月'
+            }}
+        ];
+        function addMarker3(){
+            for (var i = 0, marker; i < zstzMark.length; i++) {
+                marker = new AMap.Marker({
+                    position: zstzMark[i].position,
+                    map: map,
+                    icon: zstzMark[i].icon,
+                })
+                markers.push(marker)
+                //设置文本标注内容
+                marker.content = "<div style='font-size: 12px;line-height: 22px;'><div style='text-align: center;color: #00e4f5;'>"+ 
+                    zstzMark[i].content.title +"</div><div style='background: url(./img/xmgkTitBg.png);background-size: 100% 100%;'>项目概况</div><div style=' text-indent:2em;text-indent: 2em;line-height: 16px;padding: 10px;'>"+ 
+                    zstzMark[i].content.general +"</div><div style='background: url(./img/xmgkTitBg.png);background-size: 100% 100%;'>投资详情</div><div><table style='width: 100%;'><tr><td>计划投资额："+ 
+                    zstzMark[i].content.plan +"</td><td>投资完成率："+ 
+                    zstzMark[i].content.finish +"</td></tr><tr><td>实际投资额："+ 
+                    zstzMark[i].content.real +"</td><td>投资性质："+ 
+                    zstzMark[i].content.nature +"</td></tr><tr><td>项目当前进程："+ 
+                    zstzMark[i].content.course +"</td><td>项目启动："+ 
+                    zstzMark[i].content.time +"</td></tr></table></div></div>"
+                marker.on('click', markerClick);
+                marker.emit('click', {
+                    target: marker
+                });
+            }
+        };
+
+        // 大屏点击切换事件
+        var ulList = document.getElementById("ulList").children
+        var mid_cont = document.getElementById("mid_cont").children
+        for(var i=0; i< ulList.length; i++) {
+            change(ulList[i].firstChild)
+        }
+        function change (obj0) {
+            obj0.onclick = function () {
+                for(var j=0; j<ulList.length; j++) {
+                    if(obj0 == ulList[j].firstChild) {
+                        obj0.className = "tabbarAct";
+                        mid_cont[j].className = "rylb selecte0"
+                        removeMarkers()
+                        if(j == 0) {
+                            addMarker0()
+                        }else if(j == 1) {
+                            addMarker1()
+                        }else if(j == 2) {
+                            addMarker2()
+                        }else {
+                            addMarker3()
+                        }
+                        
+                    }else{
+                        ulList[j].firstChild.className = ''
+                        mid_cont[j].className = 'rylb not_seled0'
+                    }
+                }
+            }
+        }
+    });
+    </script>
+    <script type="text/javascript">
+        window.onresize=function(){ 
+            location=location; 
+        }
+
+        // 政效分析点击切换事件
+        var arrLi = document.getElementById("tabbar").children
+        var content = document.getElementById("content").children
+        for(var i=0; i< arrLi.length; i++) {
+            cut(arrLi[i])
+        }
+        function cut (obj) {
+            obj.onclick = function () {
+                for(var j=0; j<arrLi.length; j++) {
+                    if(obj == arrLi[j]) {
+                        obj.className = "zxfx_act";
+                        content[j].className = "selecte zxfx_ul"
+                    }else{
+                        arrLi[j].className = ''
+                        content[j].className = 'not_seled zxfx_ul'
+                    }
+                }
+            }
+        }
+
+        var zhiku = document.getElementById("zhiku")
+        zhiku.oninput = function(e){
+            // 智库 点击搜索
+            $("#zk_search").click(function(){
+                if(zhiku.value == '') {
+                    alert("请输入搜索关键词")
+                }else{
+                    document.getElementById("search01").style.display = 'none'
+                    document.getElementById("search02").style.display = 'block'
+                    document.getElementById("zhiku01").value = zhiku.value
+                }
+            })
+        }
+
+        // 点击搜索关闭按钮
+        $("#closeImg").click(function(){
+            document.getElementById("search02").style.display = 'none'
+            document.getElementById("search01").style.display = 'block'
+            document.getElementById("zhiku").value = ''
+        })
+
+        // 点击删除最近搜索标签
+        $("#shanchu").click(function(){
+            document.getElementById("nearSear").innerHTML = ''
+        })
+
+        // 人员列表 点击搜索
+        $(document).ready(function(){
+            $("#rylb_sear").click(function(){
+                alert("人员列表搜索")
+            })
+        })
+
+        // 数据总览
+        var option1 = {
+            title: {
+                text: '本月新增数据统计',
+                x:'center',
+                textStyle: {
+                    color: '#00ebfb',
+                    fontSize: 12,
+                    fontWeight: 300,
+                }
+            },
+            color: ['#3398DB'],
+            tooltip: {
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            grid: {
+                top: '30%',
+                left: '2%',
+                right: '2%',
+                bottom: '5%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['百科全书','专家智库','热点要闻'],
+                axisTick: {
+                    alignWithLabel: true
+                },
+                axisTick: {show: false},
+                axisLine:{
+                    lineStyle:{
+                        show:false,
+                        color:'#114D94', //横轴上的颜色
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#72ABE2'
+                    }
+                },
+            },
+            yAxis: {
+                type: 'value',
+                // y轴最大值结尾处添加单位name
+                name: '数量：条',
+                nameLocation: "end",
+                nameTextStyle:{
+                    color:"#657dbb", 
+                    fontSize:12,
+                    fontWeight: 300,
+                },
+                axisTick: {show: false},
+                axisLine:{
+                    show: false,  // 不显示y轴
+                    lineStyle:{
+                        color:'#657dbb', //纵轴上的颜色
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#0D2B5C', // 网格线颜色
+                        width: 1,
+                        // opacity: 0.2
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#657dbb'
+                    }
+                },
+            },
+            series: [
+                {
+                    type: 'bar',
+                    barWidth: '30%',
+                    data:[100, 252, 200],
+                    itemStyle: {   // 柱子渐变色
+                        normal: {
+                            color:function (params) {
+                                var colorList = [
+                                    ['#0482de', '#3f29d0'],
+                                    ['#ffd701', '#fb9400'],
+                                    ['#65dfe3', '#0482df'],
+                                ];
+                                var index = params.dataIndex;
+                                if (params.dataIndex >= colorList.length) {
+                                    index = params.dataIndex - colorList.length;
+                                }
+                                return new echarts.graphic.LinearGradient(0, 0, 0, 1,
+                                    [{
+                                        offset: 0,
+                                        color: colorList[index][0]
+                                    },
+                                    {
+                                        offset: 1,
+                                        color: colorList[index][1]
+                                    }
+                                ]);
+                            },
+                            label: {
+                                show: true,
+                                position: 'top',
+                                textStyle: {
+                                    color: '#00ebfb',
+                                    fontSize: 12
+                                }
+                            }
+                        }
+                    }
+                },
+            ]
+        }
+        //初始化echarts实例
+        var myChartone = echarts.init(document.getElementById('allnum'));
+        //使用制定的配置项和数据显示图表
+        myChartone.setOption(option1);
+
+        // 经济运行
+        Highcharts.chart('jjyx_echart', {
+            chart: {
+                backgroundColor: 'rgba(0,0,0,0)',
+                type: 'column',
+                options3d: {
+                    enabled: true,
+                    alpha: 10,
+                    beta: 10,
+                    depth: 0,
+                    viewDistance: 25
+                }
+            },
+            xAxis: {
+                categories: ['2013', '2014', '2015', '2016', '2017', '2018'],
+                gridLineColor: 'transparent',
+                labels: {
+                    style: {
+                        "color" : "#fff"
+                    }
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#4897c5'
+                }],
+            },
+            yAxis: {
+                title:'',
+                gridLineColor: 'transparent',
+                labels: {
+                    style: {
+                        "color" : "#fff"
+                    },
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#4897c5'
+                }],
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                align: "left",
+                text:"单位：亿元",
+                style: {
+                    "color" : "#fff"
+                }
+            },
+            plotOptions: {
+                series: {
+                    depth: 25,
+                    colorByPoint: true
+                },
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        color: "#fff"
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true
+            },
+            series: [{
+                data: [1000, 1200, 900, 1000, 850, 650],
+                name: 'Cylinders',
+                showInLegend: false,
+                zones: [{
+                    color: {
+                        linearGradient:{x1: 0, y1: 0, x2: 0, y2: 1 },
+                        stops: [
+                            [0, "#70f2ef"],
+                            [1, "#3f71dd"]
+                        ]  
+                    },
+                }]
+            }]
+        });
+
+        // 高质量发展
+        var option3 = {
+            legend: {
+                data: ['江宁','萧山'],
+                itemWidth: 20,
+                itemHeight: 6,
+                textStyle: {
+                    color: "#fff"
+                }
+            },
+            radar: {
+                indicator: [
+                    { text: '规上产业增加值' },
+                    { text: '地图生产总值' },
+                    { text: '规上工业总值' },
+                    { text: '社会消费品零售总额' },
+                    { text: '服务业主营业务收入' },
+                    { text: '一般公共预算收入' },
+                    { text: '固定资产投资' },
+                    { text: '工业投资' }
+                ],
+                center: ['50%', '54%'],
+                radius: '50%',
+                splitNumber: 5,
+                shape: 'polygon',
+                name: {
+                    formatter: '{value} \n 724',
+                    color: '#fff',
+                    fontStyle: 'normal'
+                },
+                
+                axisLine: {
+                    lineStyle: {
+                        color: '#1baed4',
+                        width: 1
+                    }
+                },
+                splitArea : {
+                    show : true,   
+                    areaStyle : {
+                        color: ["rgba(255, 255, 255, 0)"]  // 图表背景网格的颜色
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#1baed4',
+                        width: 1
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '雷达图',
+                    type: 'radar',
+                    emphasis: {
+                        lineStyle: {
+                            width: 1
+                        }
+                    },
+                    data: [
+                        {
+                            value: [100, 10.1, 80, 6, -30, 200, 45, 88],
+                            name: '江宁',
+                            symbol: 'circle',
+                            symbolSize: 8,
+                            itemStyle: {
+                                color: '#01ffff'
+                            },
+                            lineStyle: {
+                                type: 'dashed',
+                                color: '#a6a227',
+                                width: 1.5
+                            },
+                            areaStyle: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        {
+                            value: [80, 4, 100, -10, 80, 300, 44, 2],
+                            name: '萧山',
+                            symbol: 'circle',
+                            symbolSize: 1,
+                            itemStyle: {
+                                color: '#eaa24d',
+                                borderWidth: 0,
+                                borderColor: '#01dbdd'
+                            },
+                            lineStyle: {
+                                color: '#01dbdd',
+                                width: 1
+                            },
+                            areaStyle: {
+                                color: 'rgba(46, 208, 234, 0.6)'
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+        //初始化echarts实例
+        var myCharthree = echarts.init(document.getElementById('gzlfz_chart'));
+        //使用制定的配置项和数据显示图表
+        myCharthree.setOption(option3);
+
+        // 项目信息 
+        var option4 = {
+            color: ["#0536f9", "#eab03d"],
+            legend: {
+                data: ['延期项目','复工项目'],
+                icon: 'rectangle',
+                bottom: 10,
+                itemWidth: 15,
+                itemHeight: 9,
+                textStyle: {
+                    color: "#5fb3f3"
+                }
+            },
+            grid: {
+                top: '20%',
+                left: '3%',
+                right: '4%',
+                bottom: '23%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月'],
+                axisLine:{
+                    show: false,  // 不显示y轴
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#5fb3f3'
+                    }
+                },
+                axisTick: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine:{
+                    show: false,  // 不显示y轴
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#5fb3f3'
+                    }
+                },
+                splitLine :{    //网格线
+                    lineStyle:{
+                        type:'dashed'    //设置网格线类型 dotted：虚线   solid:实线
+                    },
+                    show:false //隐藏或显示
+                },
+                axisTick: {  //隐藏刻度
+                    show: false
+                }
+            },
+            series: [{
+                name: '延期项目',
+                data: [120, 180, 139, 190, 210, 250, 222, 190],
+                type: 'line',
+                smooth: true,
+                areaStyle: {
+                    normal: { // 背景渐变
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,[{
+                            offset: 0, color: '#0536f9' // 0% 处的颜色
+                            }, {
+                                offset: 0.5, color: 'rgba(5,54,249,0.5)' // 100% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,0,0)' // 100% 处的颜色
+                            }]
+                        )
+                    }
+                },
+                lineStyle:{color:'#0536f9'},
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 1,
+                            color: '#1d93ef'
+                        }
+                    }
+                },
+                showSymbol:false
+            },
+            {
+                name: '复工项目',
+                data: [90, 130, 98, 140, 180, 200, 190, 160],
+                type: 'line',
+                smooth: true,
+                areaStyle: {
+                    normal: { // 背景渐变
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,[{
+                            offset: 0, color: '#d17c03' // 0% 处的颜色
+                            }, {
+                                offset: 0.5, color: 'rgba(195,155,62,0.5)' // 100% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,0,0)' // 100% 处的颜色
+                            }]
+                        )
+                    }
+                },
+                lineStyle:{color:'#d17c03'},
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 1,
+                            color: '#fce57f'
+                        }
+                    }
+                },
+                showSymbol:false
+            }]
+        }
+        // $("#xmxx_line").css({"width":$(".xmxx").width(),"height":$(".xmxx").height()})
+        //初始化echarts实例
+        var myChartfour = echarts.init(document.getElementById('xmxx_line'));
+        //使用制定的配置项和数据显示图表
+        myChartfour.setOption(option4);
+        
+        // 招商投资 
+        var option5 = {
+            color: ["#07e3f4", "#f9b100"],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c} ({d}%)'
+            },
+            legend: {
+                data: ['内资', '外资'],
+                icon: "circle",
+                itemHeight: 10,
+                itemWidth: 10,
+                right: 10,
+                top: "38%",
+                bottom: 20,
+                height: 80,
+                width:30,
+                textStyle: {
+                    color: "#fff",
+                    fontSize: 12
+                },
+                formatter: function(name) {
+                    var index = 0;
+                    var clientlabels = ['内资', '外资'];
+                    var clientcounts = ["155亿元","120亿元"];
+                    clientlabels.forEach(function(value,i){
+                        if(value == name){
+                            index = i;
+                        }
+                    });
+                    return name + "  " + clientcounts[index];
+                }
+            },
+            series: [
+            {
+                    name: '管控率',
+                    type: 'gauge',
+                    center: ['35%', '50%'],
+                    radius: '59%',
+                    startAngle: 314,
+                    endAngle: -45,
+                    min: 0,
+                    max: 100,
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            width: 1,
+                            color: [
+                                [
+                                    100 / 100, new echarts.graphic.LinearGradient(
+                                    0, 0, 1, 0, [{
+                                        offset: 0,
+                                        color: '#0041c2'
+                                    },
+                                        {
+                                            offset: 1,
+                                            color: '#0041c2'
+                                        }
+                                    ]
+                                )
+                                ],
+                                [
+                                    1, '#0041c2'
+                                ]
+                            ]
+                        }
+                    },
+                    axisTick: {
+                        show: 0
+                    },
+                    splitLine: {
+                        show: 0
+                    },
+                    axisLabel: {
+                        show: 0
+                    },
+                    pointer: {
+                        show: 0
+                    },
+                    detail: {
+                        show: 0
+                    },
+                    data: [{
+                        value: 100
+                    }]
+                },
+                {
+                    type: 'pie',
+                    radius: [10, 47],
+                    center: ['35%', '50%'],
+                    roseType: 'radius',
+                    label: {
+                        show: false
+                    },
+                    emphasis: {
+                        label: {
+                            show: true
+                        }
+                    },
+                    data: [
+                        {value: 10, name: '内资'},
+                        {value: 5, name: '外资'}
+                    ]
+                }
+            ]
+        }
+        //初始化echarts实例
+        var myChartfour = echarts.init(document.getElementById('zstz_pie'));
+        //使用制定的配置项和数据显示图表
+        myChartfour.setOption(option5);
+
+
+
+
+         //初始化echarts实例
+        // var MyCubeRect = echarts.graphic.extendShape({     
+        //     shape: {         
+        //         x: 0,         
+        //         y: 0,         
+        //         width: 48, //柱宽                 
+        //         zWidth: 8, //阴影折角宽                 
+        //         zHeight: 4, //阴影折角高      
+        //     },     
+        //     buildPath: function (ctx, shape) {         
+        //         const api = shape.api;         
+        //         const xAxisPoint = api.coord([shape.xValue, 0]);         
+        //         const p0 = [shape.x, shape.y];         
+        //         const p1 = [shape.x - 24, shape.y];         
+        //         const p4 = [shape.x + 24, shape.y];         
+        //         const p2 = [xAxisPoint[0] - 24, xAxisPoint[1]];         
+        //         const p3 = [xAxisPoint[0] + 24, xAxisPoint[1]];                  
+        //         ctx.moveTo(p0[0], p0[1]); //0         
+        //         ctx.lineTo(p1[0], p1[1]); //1         
+        //         ctx.lineTo(p2[0], p2[1]); //2         
+        //         ctx.lineTo(p3[0], p3[1]); //3         
+        //         ctx.lineTo(p4[0], p4[1]); //4         
+        //         ctx.lineTo(p0[0], p0[1]); //0         
+        //         ctx.closePath();     
+        //     } 
+        // }); 
+        // var MyCubeShadow = echarts.graphic.extendShape({     
+        //     shape: {         
+        //         x: 0,         
+        //         y: 0,         
+        //         width: 48,         
+        //         zWidth: 8,         
+        //         zHeight: 4,     
+        //     },     
+        //     buildPath: function (ctx, shape) {         
+        //         const api = shape.api;         
+        //         const xAxisPoint = api.coord([shape.xValue, 0]);         
+        //         const p0 = [shape.x, shape.y];         
+        //         const p1 = [shape.x - 24, shape.y];         
+        //         const p4 = [shape.x + 24, shape.y];         
+        //         const p6 = [shape.x + 24 + 8, shape.y - 4];         
+        //         const p7 = [shape.x - 24 + 8, shape.y - 4];         
+        //         const p3 = [xAxisPoint[0] + 24, xAxisPoint[1]];         
+        //         const p5 = [xAxisPoint[0] + 24 + 8, xAxisPoint[1] - 4];               
+        //         ctx.moveTo(p4[0], p4[1]); //4         
+        //         ctx.lineTo(p3[0], p3[1]); //3         
+        //         ctx.lineTo(p5[0], p5[1]); //5         
+        //         ctx.lineTo(p6[0], p6[1]); //6         
+        //         ctx.lineTo(p4[0], p4[1]); //4               
+        //         ctx.moveTo(p4[0], p4[1]); //4         
+        //         ctx.lineTo(p6[0], p6[1]); //6         
+        //         ctx.lineTo(p7[0], p7[1]); //7         
+        //         ctx.lineTo(p1[0], p1[1]); //1         
+        //         ctx.lineTo(p4[0], p4[1]); //4         
+        //         ctx.closePath();     
+        //     } 
+        // }); 
+        // echarts.graphic.registerShape('MyCubeRect', MyCubeRect); 
+        // echarts.graphic.registerShape('MyCubeShadow', MyCubeShadow); 
+        // option = {     
+        //     grid: {  height: 300     },    
+        //     xAxis: {  data: ['one', 'two']     },     
+        //     yAxis: {  type: 'value'     },     
+        //     series: [{         
+        //         type: 'custom',         
+        //         renderItem: function (params, api) {             
+        //             let location = api.coord([api.value(0), api.value(1)]);             
+        //             return {                 
+        //                 type: 'group',                 
+        //                 children: [{                     
+        //                     type: 'MyCubeRect',                     
+        //                     shape: {                         
+        //                         api,                         
+        //                         xValue: api.value(0),                         
+        //                         yValue: api.value(1),                         
+        //                         x: location[0],                         
+        //                         y: location[1]                     
+        //                     },                    
+        //                     style: {                         
+        //                         fill: '#5AD8A6'                     
+        //                     }                 
+        //                 },{                     
+        //                     type: 'MyCubeShadow',                     
+        //                     shape: {                         
+        //                         api,                         
+        //                         xValue: api.value(0),                         
+        //                         yValue: api.value(1),                         
+        //                         x: location[0],                         
+        //                         y: location[1]                     
+        //                     },                     
+        //                     style: {                         
+        //                         fill: '#2DCF8E'                     
+        //                     }                 
+        //                 }]             
+        //             };         
+        //         },        
+        //         data: [20, 60]     
+        //     }] 
+        // };
+        // //使用制定的配置项和数据显示图表
+        // myChartwo.setOption(option2);
+
+        // 数组重组
+//         var areas =  [
+//             {
+//                 "daimg": "uploadfiles/1585727046725.jpg",
+//                 "dano": 1,
+//                 "daname": "江宁"
+//             },
+//             {
+//                 "daimg": "uploadfiles/1585727460790.jpg",
+//                 "dano": 2,
+//                 "daname": "南京"
+//              },
+//             {
+//                 "daimg": "uploadfiles/1585727537368.png",
+//                 "dano": 3,
+//                 "daname": "全国"
+//             }
+//         ]
+//         var aaa = areas.map(item => ({
+//             dano: item.dano,
+//             daname: item.daname
+//         }))
+//         console.log(aaa)
+
+        
+    </script>
