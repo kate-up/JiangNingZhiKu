@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>江宁智库大屏</title>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/echarts.min.js"></script>
+        <script src="http://cdn.hcharts.cn/jquery/jquery-1.8.3.min.js"></script>
+        <script src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>highcharts-3d.js
+        <script src="http://cdn.hcharts.cn/highcharts/highcharts-3d.js"></script>
+        <style>
+            *{
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                color: #fff;
+                /* font-family: Microsoft JhengHei; */
+            }
+            ul {
+                list-style: none;
+            }
+            .top_title {
+                width: 100%;
+                height: 8%;
+                background: url('./img/title.png');
+                background-size: 100% 100%;
+                display: flex;
+                justify-content: space-between;
+            }
+            .top_title div {
+                width: 30%;
+                height: 49%;
+                text-align: center;
+                line-height: 55px;
+                font-size: 14px;
+            }
+            .content {
+               position: absolute;
+               z-index: -1; 
+                width: 100%;
+                height: 100%;
+                background: url('./img/base_bg.png') no-repeat ;
+                background-size: 100% 100%;
+            }
+            .tabbar {
+                width: 100%;
+                padding: 0.5% 10%;
+                background: url('./img/title_bg.png') no-repeat;
+                background-size: 100% 100%;
+                display: flex;
+                justify-content: space-around;
+            }
+            .tabbar li {
+                font-size: 12px;
+                margin: -18px 15px -12px 15px;
+                font-weight: bold;
+                color: #00ebfb;
+                cursor: pointer;
+                white-space: nowrap;
+            }
+            .tabbarAct, .sm_tit {
+                background-image: -webkit-linear-gradient(top,#eacd93,#eb9d47);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+            .details {
+                height: 92%;
+                display: flex;
+                justify-content: space-between;
+            }
+            .details > div:nth-child(odd) {
+                width: 28%;
+            }
+            .details > div:nth-child(even) {
+                width: 44%;
+            }
+            .left_cont > div {
+                height: 31.5%;
+                margin: 2.5% 3% 0 0;
+            }
+            .zxfx {
+                background: url('./img/box.png');
+                background-size: 100% 100%;
+            }
+            .sm_tit {
+                display: flex;
+                font-weight: bold;
+                font-size: 15px;
+                padding: 2% 0 1% 4%;
+            }
+            .sm_tit img {
+                height: 17px;
+                width: 30%;
+                padding: 1% 0 0 3%;
+            }
+            .zxfx_tab {
+                display: flex;
+                justify-content: space-around;
+                font-size: 12px;
+                
+            }
+            .zxfx_tab li {
+                color: #09add3;
+                width: 32.3%;
+                padding: 1.5%;
+                text-align: center;
+                background: #0f409a;
+                cursor: pointer;
+                border: 1px solid #0f409a;
+            }
+            .zxfx_act {
+                color: #00ebfb !important;
+                border: 1px solid #00ebfb !important;
+            }
+            .zxfx_ul {
+                height: 100%; 
+                display: flex;
+                flex-direction: column; 
+                justify-content: space-around;
+            }
+            .zxfx_ul li {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                font-size: 12px;
+                padding: 3% 0;
+                margin: 2% 0;
+                border: 1px solid #0a43bb;
+                background: rgba(15, 61, 122, 0.3);
+                white-space: nowrap;
+            }
+            .zxfx_ul li > div {
+                display: flex;
+                width: 33%;
+            }
+            .zxfx_ul li > div > div:nth-child(odd) {
+                width: 55%;
+                text-align: center;
+                color: #00ebfb;
+            }
+            .zxfx_ul li > div > div:nth-child(even) {
+                width: fit-content;
+                width: 40%;
+                width: 58px;
+                padding: 0 5px;
+                text-align: center;
+                background: rgba(13, 64, 154, 0.7);
+                border: 1px solid #0a43bb;
+            }
+            .fzr {
+                padding: 0 !important;
+                background: none !important;
+                border: none !important;
+            }
+            .fzr img {
+                height: 8px;
+                margin: 0 2px 1px 0;
+            }
+            .rylb {
+                position: absolute;
+                bottom: 1.5%;
+                height: 31%;
+                width: 44%;
+            }
+            .rdyw, .rylb {
+                background: url('./img/box1.png');
+                background-size: 100% 100%;
+            }
+            .rdyw_ul {
+                padding-left: 2%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+                height: 84%;
+            }
+            .rdyw_ul li {
+                font-size: 12px;
+                line-height: 27px;
+                white-space: nowrap;
+            }
+            .rdyw_ul li img {
+                vertical-align: middle;
+                margin: 0 10px;
+            }
+            .sjzl {
+                background: url('./img/box1.png');
+                background-size: 100% 100%;
+            }
+            .sjzl_cont {
+                display: flex;
+                justify-content: space-around;
+                padding: 0 2%;
+                height: 74%;
+            }
+            .sjzl_cont > div:nth-child(1) {
+                width: 30%;
+                text-align: center;
+            }
+            .sjzl_cont > div:nth-child(2) {
+                width: 65%;
+            }
+            .sjzl_left {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-around;
+            }
+            .sjzl_left span ,.sjzl_left p {
+                font-size: 12px;
+            }
+            .sjzl_left p {
+                color: #00ebfb;
+                margin-top: 2%;
+            }
+            .baseplat {
+                background: url('./img/baseplate.png') no-repeat;
+                background-size: 50% 50%;
+                background-position: bottom;
+                height: 77%;
+            }
+            .sjzl_echart, .sjzl_left {
+                border: 1px solid #0a43bb;
+                background: rgba(15, 61, 122, 0.3);
+            }
+            .middle_cont {
+
+            }
+            .right_cont > div:nth-child(1) {
+                height: 32%;
+                margin: 2.5% 0 0 3%;
+            }
+            .right_cont > div:nth-child(2) {
+                height: 64%;
+                margin: 2.5% 0 0 3%;
+                background: url('./img/big_box.png') no-repeat;
+                background-size: 100% 100%;
+            }
+            .jjyx {
+                white-space: nowrap;
+                width: 100%;
+                font-size: 15px;
+            }
+            .jjyx img {
+                vertical-align: middle;
+                padding: 4px;
+                width: 30%;
+            }
+            .gzlfz_text, .gzlfz_text0 {
+                background-image: -webkit-linear-gradient(top,#01ffff,#01ffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                padding: 9% 0%;
+            }
+            .gzlfz_text0 {
+                background-image: -webkit-linear-gradient(top,#eacd93,#eb9d47);
+            }
+            .vs_img {
+                margin: 0 26px;
+                height: 0%;
+            }
+            .zhiku, .rylb_tit_row input {
+                background: transparent;
+                border: 0;
+                outline: none;
+                width: 100px;
+                font-size: 12px;
+            }
+            .zhiku::-webkit-input-placeholder{/*Webkit browsers*/
+                color: #fff;
+                font-size: 12px;
+            }
+            .zhiku:-moz-placeholder{/*Mozilla Firefox 4 to 8*/
+                color:#999;
+                font-size: 12px;
+            }
+
+            .zhiku:-ms-input-placeholder{/*Internet Explorer 10+*/
+                color:#999;
+                font-size: 12px;
+            }
+            .rylb_tit_row input::-webkit-input-placeholder{/*Webkit browsers*/
+                color: #00ebfb;
+                font-size: 12px;
+            }
+            .rylb_tit_row input:-moz-placeholder{/*Mozilla Firefox 4 to 8*/
+                color:#00ebfb;
+                font-size: 12px;
+            }
+
+            .rylb_tit_row input:-ms-input-placeholder{/*Internet Explorer 10+*/
+                color:#00ebfb;
+                font-size: 12px;
+            }
+            .search_img, .rylb_tit_row img {
+                width: 14px;
+                height: 14px;
+                vertical-align: middle;
+            }
+            .rylb_tit_row, .hjjc_unit {
+                position: absolute;
+                top: 0;
+                right: 0;
+                border: 1px solid #0a43bb;
+                background: rgba(15, 61, 122, 0.3);
+                padding: 0px 9px 4px;
+                margin: 6px 5px;
+            }
+            .hjjc_unit {
+                border: none;
+                background: none;
+                font-size: 12px;
+                top: 8px;
+            }
+            .rylb_tit_row img {
+                margin-right: 5px;
+            }
+            .rylb_table {
+                width: 100%;
+                text-align: center;
+                font-size: 12px;
+                height: 100%;
+                border-collapse:collapse;
+            }
+            .rylb_table thead td {
+                color: #00ebfb !important;
+            }
+            .rylb_table thead td {
+                padding-bottom: 6px;
+            }
+            .rylb_table tbody tr:nth-child(odd) {
+                background: #000000;
+                background: -moz-linear-gradient(left,  rgba(0,0,0,0) 0%, rgba(15, 61, 122, 0.9) 100%);
+                background: -webkit-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                background: -o-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                background: -ms-linear-gradient(left,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                background: linear-gradient(to right,  rgba(0,0,0,0) 0%,rgba(15, 61, 122, 0.9) 100%);
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='rgba(0,0,0,0)', endColorstr='rgba(15, 61, 122, 0.9)',GradientType=0 );
+            }
+            .word_red {
+                color: #dd4528;
+            }
+            .selecte {
+                display: block;
+            }
+            .not_seled {
+                display: none;
+            }
+            .selecte0 {
+                display: block;
+            }
+            .not_seled0 {
+                visibility: hidden !important;
+            }
+        </style>
+    </head>
+
+    <body >
+        <div class="content">
+            <div class="top_title">
+                <div>3月27日 星期三 15:2:20</div>
+                <div style="position: relative;top: 92%;">
+                    <ul id="ulList" class="tabbar" >
+                        <li class="tabbarAct">人员信息</li><li>项目信息</li><li>环境监测</li><li>招商投资</li>
+                    </ul>
+                </div>
+                <div>8℃ 多云</div>
+            </div>
+            <div class="details">
+                <div class="left_cont">
+                    <div class="zxfx">
+                        <div class="sm_tit"><div>政效分析</div><img src="./img/xiexian.png" alt=""></div>
+                        <div style="padding: 0 2%; height: 85%;">
+                            <ul id="tabbar" class="zxfx_tab">
+                                <li class="zxfx_act">今日大厅</li><li>工单12345</li><li>预审待办</li>
+                            </ul>
+                            <div id="content" style="height: 85%;">
+                                <ul class="zxfx_ul selecte" style="height: 100%; flex-direction: column; justify-content: space-around;">
+                                    <li>
+                                        <div>
+                                            <div>办理进度</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>已办理</div>
+                                            <div>158人次</div>
+                                        </div>
+                                        <div>
+                                            <div>待办理</div>
+                                            <div>5人次</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>本月叫号峰值</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>峰值日</div>
+                                            <div class="fzr"><img src="./img/red_circle.png" />2020-3-18</div>
+                                        </div>
+                                        <div>
+                                            <div>日均值</div>
+                                            <div>8单/日</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>本月累计</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>本年累计</div>
+                                            <div>158人次</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul class="zxfx_ul not_seled" style="height: 100%; flex-direction: column; justify-content: space-around;">
+                                    <li>
+                                        <div>
+                                            <div>办结率</div>
+                                            <div >78件</div>
+                                        </div>
+                                        <div>
+                                            <div>已派单</div>
+                                            <div>158件</div>
+                                        </div>
+                                        <div>
+                                            <div>已结单</div>
+                                            <div class="word_red">54</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>及时签收率</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>综合满意率</div>
+                                            <div>64%</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>本月累计</div>
+                                            <div class="word_red">113单</div>
+                                        </div>
+                                        <div>
+                                            <div>本年累计</div>
+                                            <div class="word_red">2024单</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ul class="zxfx_ul not_seled" style="height: 100%; flex-direction: column; justify-content: space-around;">
+                                    <li>
+                                        <div>
+                                            <div>不通过项目</div>
+                                            <div>78件</div>
+                                        </div>
+                                        <div>
+                                            <div>已派单</div>
+                                            <div>158人次</div>
+                                        </div>
+                                        <div>
+                                            <div>已办结</div>
+                                            <div class="word_red">54</div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>已通过项目</div>
+                                            <div>78%</div>
+                                        </div>
+                                        <div>
+                                            <div>综合满意率</div>
+                                            <div>64%</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div>
+                                            <div>平均处理周期</div>
+                                            <div class="word_red">113单</div>
+                                        </div>
+                                        <div>
+                                            <div>本年累计</div>
+                                            <div class="word_red">2024件</div>
+                                        </div>
+                                        <div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <div class="rdyw">
+                        <div class="sm_tit"><div>热点要闻</div><img src="./img/xiexian.png" alt=""></div>
+                        <ul class="rdyw_ul">
+                            <li><img src="./img/sm_circle.png" />我有一批重点基础设施战略合作项目集中签约 <img src="./img/hot.png" alt=""></li>
+                            <li><img src="./img/sm_circle.png" />秣陵新市镇三期安置房及公共基础设施项目批前公示 <img src="./img/hot.png" alt=""></li>
+                            <li><img src="./img/sm_circle.png" />助企业复工达产，江宁律师“搭把手”</li>
+                            <li><img src="./img/sm_circle.png" />江宁区24个村庄命名市级示范村</li>
+                            <li><img src="./img/sm_circle.png" />市政府关于变更雨花台区部分行政区划的批复</li>
+                            <li><img src="./img/sm_circle.png" />我区入江水质持续改善</li>
+                        </ul>
+                    </div>
+                    <div class="sjzl">
+                        <div class="sm_tit"><div>数据总览</div><img src="./img/xiexian.png" alt=""></div>
+                        <div class="sjzl_cont" style="display: flex;">
+                            <div class="sjzl_left">
+                                <div>
+                                    <div class="baseplat">166<span>米</span></div>
+                                    <p>本月增量</p>
+                                </div>
+                                <div>
+                                    <div class="baseplat">5568<span>米</span></div>
+                                    <p>智库数据总量</p>
+                                </div>
+                            </div>
+                            <div class="sjzl_echart">
+                                <div id="allnum" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="middle_cont">
+                    <div>
+                        <div style="display: flex; margin: 4.4% auto;width: fit-content;font-size: 12px;">
+                            <div style="background: rgba(0, 0, 0, 0.2); padding: 6px;">智库<img src="./img/down.png" /></div>
+                            <div style="    background: rgba(0,0,0,0.55); padding: 6px;"><input class="zhiku" type="text" placeholder="请输入关键字"><img id="zk_search" class="search_img" src="./img/search.png" alt=""></div>
+                        </div>
+                    </div>
+                    <div id="mid_cont">
+                        <div class="rylb selecte0" >
+                            <div class="sm_tit"><div>人员列表</div><img src="./img/xiexian.png" alt=""></div>
+                            <div class="rylb_tit_row">
+                                <img id="rylb_sear" src="./img/search0.png" alt=""><input type="text" placeholder="请输入搜索人信息">
+                            </div>
+                            <div style="width: 100%; height: 80%;padding: 3px 5px 0;">
+                                <table class="rylb_table">
+                                    <thead>
+                                        <tr>
+                                            <td>姓名</td><td>职位</td><td>电话</td><td>性别</td><td>年龄</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>张三</td><td>民政局局长</td><td>15167845889</td><td>男</td><td>45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>张三</td><td>民政局局长</td><td>15167845889</td><td>男</td><td>45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>张三</td><td>民政局局长</td><td>15167845889</td><td>男</td><td>45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>张三</td><td>民政局局长</td><td>15167845889</td><td>男</td><td>45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>张三</td><td>民政局局长</td><td>15167845889</td><td>男</td><td>45</td>
+                                        </tr>
+                                        <tr>
+                                            <td>张三</td><td>民政局局长</td><td>15167845889</td><td>男</td><td>45</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="rylb not_seled0" >
+                            <div class="sm_tit"><div>项目信息</div><img src="./img/xiexian.png" alt=""></div>
+                            <div class="hjjc_unit">数量：个</div>
+                            <div class="xmxx" style="width: 100%; height: 80%;padding: 3px 5px 0;display: flex;">
+                                <div id="xmxx_pie" style="width: 50%; height: 100%;"></div>
+                                <div id="xmxx_line" style="width: 50%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="rylb not_seled0" >
+                            <div class="sm_tit"><div>环境监测</div><img src="./img/xiexian.png" alt=""></div>
+                            <div class="hjjc_unit">数量：个</div>
+                            <div style="width: 100%; height: 80%;padding: 3px 5px 0;">
+                                <div id="hjjc_echart" style="width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+                        <div class="rylb not_seled0">
+                            <div class="sm_tit"><div>招商投资</div><img src="./img/xiexian.png" alt=""></div>
+                            <div style="width: 100%; height: 80%;padding: 3px 5px 0;display: flex;">
+                                <div id="zstz_pie" style="width: 45%; height: 100%;"></div>
+                                <div id="zstz_line" style="width: 55%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right_cont">
+                    <div class="zxfx">
+                        <div class="sm_tit"><div>经济运行</div><img src="./img/xiexian.png" alt=""></div>
+                        <div style="padding: 0 2%; height: 100%;">
+                            <div class="jjyx"><div style="margin: auto;width: fit-content;"><img src="./img/left_sq.png" />地区生产总值趋势图<img src="./img/right_sq.png" /></div></div>
+                            <div id="jjyx_echart" style="width: 100%; height: 75%;"></div>
+                        </div>
+                    </div>
+                    <div class="sjzl">
+                        <div class="sm_tit"><div>高质量发展</div><img src="./img/xiexian.png" alt=""></div>
+                        <div style="font-size: 18px;font-weight: bold;text-align: center;">
+                            <div style="display: flex;width: fit-content;margin: 5% auto;">
+                                <div class="gzlfz_text">江宁</div>
+                                <img class="vs_img" src="./img/vs.png" alt="">
+                                <div class="gzlfz_text0">昆山</div>
+                            </div>
+                        </div>
+                        <div id="gzlfz_chart" style="width: 100%; height: 70%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+
+    <script type="text/javascript">
+        window.onresize=function(){ 
+            location=location; 
+        }
+
+        // 大屏点击切换事件
+        var ulList = document.getElementById("ulList").children
+        var mid_cont = document.getElementById("mid_cont").children
+        for(var i=0; i< ulList.length; i++) {
+            change(ulList[i])
+        }
+        function change (obj0) {
+            obj0.onclick = function () {
+                for(var j=0; j<ulList.length; j++) {
+                    if(obj0 == ulList[j]) {
+                        obj0.className = "tabbarAct";
+                        mid_cont[j].className = "rylb selecte0"
+                    }else{
+                        ulList[j].className = ''
+                        mid_cont[j].className = 'rylb not_seled0'
+                    }
+                }
+            }
+        }
+
+        // 政效分析点击切换事件
+        var arrLi = document.getElementById("tabbar").children
+        var content = document.getElementById("content").children
+        for(var i=0; i< arrLi.length; i++) {
+            cut(arrLi[i])
+        }
+        function cut (obj) {
+            obj.onclick = function () {
+                for(var j=0; j<arrLi.length; j++) {
+                    if(obj == arrLi[j]) {
+                        obj.className = "zxfx_act";
+                        content[j].className = "selecte zxfx_ul"
+                    }else{
+                        arrLi[j].className = ''
+                        content[j].className = 'not_seled zxfx_ul'
+                    }
+                }
+            }
+        }
+
+        // 智库 点击搜索
+        $(document).ready(function(){
+            $("#zk_search").click(function(){
+                alert("智库搜索")
+            })
+        })
+
+        // 人员列表 点击搜索
+        $(document).ready(function(){
+            $("#rylb_sear").click(function(){
+                alert("人员列表搜索")
+            })
+        })
+
+        // 数据总览
+        var option1 = {
+            title: {
+                text: '本月新增数据统计',
+                x:'center',
+                textStyle: {
+                    color: '#00ebfb',
+                    fontSize: 12,
+                    fontWeight: 300,
+                }
+            },
+            color: ['#3398DB'],
+            tooltip: {
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            grid: {
+                top: '30%',
+                left: '2%',
+                right: '2%',
+                bottom: '5%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['百科全书','专家智库','热点要闻'],
+                axisTick: {
+                    alignWithLabel: true
+                },
+                axisTick: {show: false},
+                axisLine:{
+                    lineStyle:{
+                        show:false,
+                        color:'#114D94', //横轴上的颜色
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#72ABE2'
+                    }
+                },
+            },
+            yAxis: {
+                type: 'value',
+                // y轴最大值结尾处添加单位name
+                name: '数量：条',
+                nameLocation: "end",
+                nameTextStyle:{
+                    color:"#657dbb", 
+                    fontSize:12,
+                    fontWeight: 300,
+                },
+                axisTick: {show: false},
+                axisLine:{
+                    show: false,  // 不显示y轴
+                    lineStyle:{
+                        color:'#657dbb', //纵轴上的颜色
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#0D2B5C', // 网格线颜色
+                        width: 1,
+                        // opacity: 0.2
+                    }
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#657dbb'
+                    }
+                },
+            },
+            series: [
+                {
+                    type: 'bar',
+                    barWidth: '30%',
+                    data:[100, 252, 200],
+                    itemStyle: {   // 柱子渐变色
+                        normal: {
+                            color:function (params) {
+                                var colorList = [
+                                    ['#0482de', '#3f29d0'],
+                                    ['#ffd701', '#fb9400'],
+                                    ['#65dfe3', '#0482df'],
+                                ];
+                                var index = params.dataIndex;
+                                if (params.dataIndex >= colorList.length) {
+                                    index = params.dataIndex - colorList.length;
+                                }
+                                return new echarts.graphic.LinearGradient(0, 0, 0, 1,
+                                    [{
+                                        offset: 0,
+                                        color: colorList[index][0]
+                                    },
+                                    {
+                                        offset: 1,
+                                        color: colorList[index][1]
+                                    }
+                                ]);
+                            },
+                            label: {
+                                show: true,
+                                position: 'top',
+                                textStyle: {
+                                    color: '#00ebfb',
+                                    fontSize: 12
+                                }
+                            }
+                        }
+                    }
+                },
+            ]
+        }
+        //初始化echarts实例
+        var myChartone = echarts.init(document.getElementById('allnum'));
+        //使用制定的配置项和数据显示图表
+        myChartone.setOption(option1);
+
+        // 经济运行
+        // var option2 = {
+        //     tooltip: {
+        //         axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+        //             type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+        //         }
+        //     },
+        //     grid: {
+        //         top: '20%',
+        //         left: '2%',
+        //         right: '2%',
+        //         bottom: '5%',
+        //         containLabel: true
+        //     },
+        //     xAxis: {
+        //         type: 'category',
+        //         data: ['2013','2014','2015','2016','2017','2018'],
+        //         axisTick: {
+        //             alignWithLabel: true
+        //         },
+        //         axisTick: {show: false},
+        //         axisLine:{
+        //             lineStyle:{
+        //                 show:false,
+        //                 color:'#56b1e5', //横轴上的颜色
+        //             }
+        //         },
+        //         axisLabel: {
+        //             textStyle: {
+        //                 color: '#fff'
+        //             }
+        //         },
+        //     },
+        //     yAxis: {
+        //         type: 'value',
+        //         // y轴最大值结尾处添加单位name
+        //         name: '单位：亿元',
+        //         nameLocation: "end",
+        //         nameTextStyle:{
+        //             color:"#fff", 
+        //             fontSize:12,
+        //             fontWeight: 300,
+        //         },
+        //         axisTick: {show: false},
+        //         axisLine:{
+        //             show: false,  // 不显示y轴
+        //             lineStyle:{
+        //                 color:'#657dbb', //纵轴上的颜色
+        //             }
+        //         },
+        //         splitLine: {
+        //             show:false,
+        //         },
+        //         axisLine:{
+        //             lineStyle:{
+        //                 show:false,
+        //                 color:'#56b1e5', //横轴上的颜色
+        //             }
+        //         },
+        //         axisLabel: {
+        //             textStyle: {
+        //                 color: '#fff'
+        //             }
+        //         },
+        //     },
+        //     series: [
+        //         {
+        //             type: 'bar',
+        //             barWidth: '30%',
+        //             barGap: '-100%',
+        //             zlevel: 10,
+        //             symbolSize: ['50%', '100%'],
+        //             symbolPosition: 'center',
+        //             // data:[1000, 1200, 900, 1000, 850, 650],
+        //             data:[
+        //                 {
+        //                     value: 1000,
+        //                     symbolOffset: [0, -5],
+        //                     symbol: '//img/pillar.png'
+        //                 },
+        //                 {
+        //                     value: 1200,
+        //                     symbolOffset: [0, -5],
+        //                     symbol: '//img/pillar.png'
+        //                 },
+        //                 {
+        //                     value: 900,
+        //                     symbolOffset: [0, -5],
+        //                     symbol: '//img/pillar.png'
+        //                 },
+        //                 {
+        //                     value: 1000,
+        //                     symbolOffset: [0, -5],
+        //                     symbol: 'image://../img/pillar.png'
+        //                 },
+        //                 {
+        //                     value: 850,
+        //                     symbolOffset: [0, -5],
+        //                     symbol: '//img/pillar.png'
+        //                 },
+        //                 {
+        //                     value: 650,
+        //                     symbolOffset: [0, -5],
+        //                     symbol: '//img/pillar.png'
+        //                 },
+        //             ],
+        //             itemStyle: {   // 柱子渐变色
+        //                 normal: {
+        //                     color: new echarts.graphic.LinearGradient(
+        //                         0,0,0,1,[
+        //                         {offset: 0, color: '#0F57DD'},   
+        //                         {offset: 1, color: '#092D79'}
+        //                         ]
+        //                     ),
+        //                     label: {
+        //                         show: true,
+        //                         position: 'top',
+        //                         textStyle: {
+        //                             color: '#fff',
+        //                             fontSize: 12
+        //                         }
+        //                     }
+        //                 }
+        //             }
+        //         },
+        //     ]
+        // }
+        // //初始化echarts实例
+        // var myChartwo = echarts.init(document.getElementById('jjyx_echart'));
+        // //使用制定的配置项和数据显示图表
+        // myChartwo.setOption(option2);
+        Highcharts.chart('jjyx_echart', {
+            chart: {
+                backgroundColor: 'rgba(0,0,0,0)',
+                type: 'column',
+                options3d: {
+                    enabled: true,
+                    alpha: 10,
+                    beta: 10,
+                    depth: 0,
+                    viewDistance: 25
+                }
+            },
+            xAxis: {
+                categories: ['2013', '2014', '2015', '2016', '2017', '2018'],
+                gridLineColor: 'transparent',
+                labels: {
+                    style: {
+                        "color" : "#fff"
+                    }
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#4897c5'
+                }],
+            },
+            yAxis: {
+                title:'',
+                gridLineColor: 'transparent',
+                labels: {
+                    style: {
+                        "color" : "#fff"
+                    },
+                },
+                plotLines: [{
+                    value: 0,
+                    width: 1,
+                    color: '#4897c5'
+                }],
+            },
+            credits: {
+                enabled: false
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                align: "left",
+                text:"单位：亿元",
+                style: {
+                    "color" : "#fff"
+                }
+            },
+            plotOptions: {
+                series: {
+                    depth: 25,
+                    colorByPoint: true
+                },
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        color: "#fff"
+                    }
+                }
+            },
+            dataLabels: {
+                enabled: true
+            },
+            series: [{
+                data: [1000, 1200, 900, 1000, 850, 650],
+                name: 'Cylinders',
+                showInLegend: false,
+                zones: [{
+                    color: {
+                        linearGradient:{x1: 0, y1: 0, x2: 0, y2: 1 },
+                        stops: [
+                            [0, "#70f2ef"],
+                            [1, "#3f71dd"]
+                        ]  
+                    },
+                }]
+            }]
+        });
+
+        // 高质量发展
+        var option3 = {
+            legend: {
+                data: ['江宁','萧山'],
+                itemWidth: 20,
+                itemHeight: 6,
+                textStyle: {
+                    color: "#fff"
+                }
+            },
+            radar: {
+                indicator: [
+                    { text: '规上产业增加值' },
+                    { text: '地图生产总值' },
+                    { text: '规上工业总值' },
+                    { text: '社会消费品零售总额' },
+                    { text: '服务业主营业务收入' },
+                    { text: '一般公共预算收入' },
+                    { text: '固定资产投资' },
+                    { text: '工业投资' }
+                ],
+                center: ['50%', '54%'],
+                radius: '50%',
+                splitNumber: 5,
+                shape: 'polygon',
+                name: {
+                    formatter: '{value} \n 724',
+                    color: '#fff',
+                    fontStyle: 'normal'
+                },
+                
+                axisLine: {
+                    lineStyle: {
+                        color: '#1baed4',
+                        width: 1
+                    }
+                },
+                splitArea : {
+                    show : true,   
+                    areaStyle : {
+                        color: ["rgba(255, 255, 255, 0)"]  // 图表背景网格的颜色
+                    }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: '#1baed4',
+                        width: 1
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '雷达图',
+                    type: 'radar',
+                    emphasis: {
+                        lineStyle: {
+                            width: 1
+                        }
+                    },
+                    data: [
+                        {
+                            value: [100, 10.1, 80, 6, -30, 200, 45, 88],
+                            name: '江宁',
+                            symbol: 'circle',
+                            symbolSize: 8,
+                            itemStyle: {
+                                color: '#01ffff'
+                            },
+                            lineStyle: {
+                                type: 'dashed',
+                                color: '#a6a227',
+                                width: 1.5
+                            },
+                            areaStyle: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            }
+                        },
+                        {
+                            value: [80, 4, 100, -10, 80, 300, 44, 2],
+                            name: '萧山',
+                            symbol: 'circle',
+                            symbolSize: 1,
+                            itemStyle: {
+                                color: '#eaa24d',
+                                borderWidth: 0,
+                                borderColor: '#01dbdd'
+                            },
+                            lineStyle: {
+                                color: '#01dbdd',
+                                width: 1
+                            },
+                            areaStyle: {
+                                color: 'rgba(46, 208, 234, 0.6)'
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+        //初始化echarts实例
+        var myCharthree = echarts.init(document.getElementById('gzlfz_chart'));
+        //使用制定的配置项和数据显示图表
+        myCharthree.setOption(option3);
+
+        // 项目信息 
+        var option4 = {
+            color: ["#0536f9", "#eab03d"],
+            legend: {
+                data: ['延期项目','复工项目'],
+                icon: 'rectangle',
+                bottom: 10,
+                itemWidth: 15,
+                itemHeight: 9,
+                textStyle: {
+                    color: "#5fb3f3"
+                }
+            },
+            grid: {
+                top: '20%',
+                left: '3%',
+                right: '4%',
+                bottom: '23%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月'],
+                axisLine:{
+                    show: false,  // 不显示y轴
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#5fb3f3'
+                    }
+                },
+                axisTick: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                axisLine:{
+                    show: false,  // 不显示y轴
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: '#5fb3f3'
+                    }
+                },
+                splitLine :{    //网格线
+                    lineStyle:{
+                        type:'dashed'    //设置网格线类型 dotted：虚线   solid:实线
+                    },
+                    show:false //隐藏或显示
+                },
+                axisTick: {  //隐藏刻度
+                    show: false
+                }
+            },
+            series: [{
+                name: '延期项目',
+                data: [120, 180, 139, 190, 210, 250, 222, 190],
+                type: 'line',
+                smooth: true,
+                areaStyle: {
+                    normal: { // 背景渐变
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,[{
+                            offset: 0, color: '#0536f9' // 0% 处的颜色
+                            }, {
+                                offset: 0.5, color: 'rgba(5,54,249,0.5)' // 100% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,0,0)' // 100% 处的颜色
+                            }]
+                        )
+                    }
+                },
+                lineStyle:{color:'#0536f9'},
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 1,
+                            color: '#1d93ef'
+                        }
+                    }
+                },
+                showSymbol:false
+            },
+            {
+                name: '复工项目',
+                data: [90, 130, 98, 140, 180, 200, 190, 160],
+                type: 'line',
+                smooth: true,
+                areaStyle: {
+                    normal: { // 背景渐变
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1,[{
+                            offset: 0, color: '#d17c03' // 0% 处的颜色
+                            }, {
+                                offset: 0.5, color: 'rgba(195,155,62,0.5)' // 100% 处的颜色
+                            }, {
+                                offset: 1, color: 'rgba(0,0,0,0)' // 100% 处的颜色
+                            }]
+                        )
+                    }
+                },
+                lineStyle:{color:'#d17c03'},
+                itemStyle: {
+                    normal: {
+                        lineStyle: {
+                            width: 1,
+                            color: '#fce57f'
+                        }
+                    }
+                },
+                showSymbol:false
+            }]
+        }
+        // $("#xmxx_line").css({"width":$(".xmxx").width(),"height":$(".xmxx").height()})
+        //初始化echarts实例
+        var myChartfour = echarts.init(document.getElementById('xmxx_line'));
+        //使用制定的配置项和数据显示图表
+        myChartfour.setOption(option4);
+        
+        // 招商投资 
+        var option5 = {
+            color: ["#07e3f4", "#f9b100"],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b} : {c} ({d}%)'
+            },
+            legend: {
+                data: ['内资', '外资'],
+                icon: "circle",
+                itemHeight: 10,
+                itemWidth: 10,
+                right: 10,
+                top: "38%",
+                bottom: 20,
+                height: 80,
+                width:30,
+                textStyle: {
+                    color: "#fff",
+                    fontSize: 12
+                },
+                formatter: function(name) {
+                    var index = 0;
+                    var clientlabels = ['内资', '外资'];
+                    var clientcounts = ["155亿元","120亿元"];
+                    clientlabels.forEach(function(value,i){
+                        if(value == name){
+                            index = i;
+                        }
+                    });
+                    return name + "  " + clientcounts[index];
+                }
+            },
+            series: [
+            {
+                    name: '管控率',
+                    type: 'gauge',
+                    center: ['35%', '50%'],
+                    radius: '59%',
+                    startAngle: 314,
+                    endAngle: -45,
+                    min: 0,
+                    max: 100,
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            width: 1,
+                            color: [
+                                [
+                                    100 / 100, new echarts.graphic.LinearGradient(
+                                    0, 0, 1, 0, [{
+                                        offset: 0,
+                                        color: '#0041c2'
+                                    },
+                                        {
+                                            offset: 1,
+                                            color: '#0041c2'
+                                        }
+                                    ]
+                                )
+                                ],
+                                [
+                                    1, '#0041c2'
+                                ]
+                            ]
+                        }
+                    },
+                    axisTick: {
+                        show: 0
+                    },
+                    splitLine: {
+                        show: 0
+                    },
+                    axisLabel: {
+                        show: 0
+                    },
+                    pointer: {
+                        show: 0
+                    },
+                    detail: {
+                        show: 0
+                    },
+                    data: [{
+                        value: 100
+                    }]
+                },
+                {
+                    type: 'pie',
+                    radius: [10, 47],
+                    center: ['35%', '50%'],
+                    roseType: 'radius',
+                    label: {
+                        show: false
+                    },
+                    emphasis: {
+                        label: {
+                            show: true
+                        }
+                    },
+                    data: [
+                        {value: 10, name: '内资'},
+                        {value: 5, name: '外资'}
+                    ]
+                }
+            ]
+        }
+        //初始化echarts实例
+        var myChartfour = echarts.init(document.getElementById('zstz_pie'));
+        //使用制定的配置项和数据显示图表
+        myChartfour.setOption(option5);
+
+
+
+
+         //初始化echarts实例
+        // var MyCubeRect = echarts.graphic.extendShape({     
+        //     shape: {         
+        //         x: 0,         
+        //         y: 0,         
+        //         width: 48, //柱宽                 
+        //         zWidth: 8, //阴影折角宽                 
+        //         zHeight: 4, //阴影折角高      
+        //     },     
+        //     buildPath: function (ctx, shape) {         
+        //         const api = shape.api;         
+        //         const xAxisPoint = api.coord([shape.xValue, 0]);         
+        //         const p0 = [shape.x, shape.y];         
+        //         const p1 = [shape.x - 24, shape.y];         
+        //         const p4 = [shape.x + 24, shape.y];         
+        //         const p2 = [xAxisPoint[0] - 24, xAxisPoint[1]];         
+        //         const p3 = [xAxisPoint[0] + 24, xAxisPoint[1]];                  
+        //         ctx.moveTo(p0[0], p0[1]); //0         
+        //         ctx.lineTo(p1[0], p1[1]); //1         
+        //         ctx.lineTo(p2[0], p2[1]); //2         
+        //         ctx.lineTo(p3[0], p3[1]); //3         
+        //         ctx.lineTo(p4[0], p4[1]); //4         
+        //         ctx.lineTo(p0[0], p0[1]); //0         
+        //         ctx.closePath();     
+        //     } 
+        // }); 
+        // var MyCubeShadow = echarts.graphic.extendShape({     
+        //     shape: {         
+        //         x: 0,         
+        //         y: 0,         
+        //         width: 48,         
+        //         zWidth: 8,         
+        //         zHeight: 4,     
+        //     },     
+        //     buildPath: function (ctx, shape) {         
+        //         const api = shape.api;         
+        //         const xAxisPoint = api.coord([shape.xValue, 0]);         
+        //         const p0 = [shape.x, shape.y];         
+        //         const p1 = [shape.x - 24, shape.y];         
+        //         const p4 = [shape.x + 24, shape.y];         
+        //         const p6 = [shape.x + 24 + 8, shape.y - 4];         
+        //         const p7 = [shape.x - 24 + 8, shape.y - 4];         
+        //         const p3 = [xAxisPoint[0] + 24, xAxisPoint[1]];         
+        //         const p5 = [xAxisPoint[0] + 24 + 8, xAxisPoint[1] - 4];               
+        //         ctx.moveTo(p4[0], p4[1]); //4         
+        //         ctx.lineTo(p3[0], p3[1]); //3         
+        //         ctx.lineTo(p5[0], p5[1]); //5         
+        //         ctx.lineTo(p6[0], p6[1]); //6         
+        //         ctx.lineTo(p4[0], p4[1]); //4               
+        //         ctx.moveTo(p4[0], p4[1]); //4         
+        //         ctx.lineTo(p6[0], p6[1]); //6         
+        //         ctx.lineTo(p7[0], p7[1]); //7         
+        //         ctx.lineTo(p1[0], p1[1]); //1         
+        //         ctx.lineTo(p4[0], p4[1]); //4         
+        //         ctx.closePath();     
+        //     } 
+        // }); 
+        // echarts.graphic.registerShape('MyCubeRect', MyCubeRect); 
+        // echarts.graphic.registerShape('MyCubeShadow', MyCubeShadow); 
+        // option = {     
+        //     grid: {  height: 300     },    
+        //     xAxis: {  data: ['one', 'two']     },     
+        //     yAxis: {  type: 'value'     },     
+        //     series: [{         
+        //         type: 'custom',         
+        //         renderItem: function (params, api) {             
+        //             let location = api.coord([api.value(0), api.value(1)]);             
+        //             return {                 
+        //                 type: 'group',                 
+        //                 children: [{                     
+        //                     type: 'MyCubeRect',                     
+        //                     shape: {                         
+        //                         api,                         
+        //                         xValue: api.value(0),                         
+        //                         yValue: api.value(1),                         
+        //                         x: location[0],                         
+        //                         y: location[1]                     
+        //                     },                    
+        //                     style: {                         
+        //                         fill: '#5AD8A6'                     
+        //                     }                 
+        //                 },{                     
+        //                     type: 'MyCubeShadow',                     
+        //                     shape: {                         
+        //                         api,                         
+        //                         xValue: api.value(0),                         
+        //                         yValue: api.value(1),                         
+        //                         x: location[0],                         
+        //                         y: location[1]                     
+        //                     },                     
+        //                     style: {                         
+        //                         fill: '#2DCF8E'                     
+        //                     }                 
+        //                 }]             
+        //             };         
+        //         },        
+        //         data: [20, 60]     
+        //     }] 
+        // };
+        // //使用制定的配置项和数据显示图表
+        // myChartwo.setOption(option2);
+    </script>
+</html>
